@@ -1,21 +1,21 @@
 ﻿#pragma once
-#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
-#include "IconCodex.h"
+#include "Icon.h"
 
 #include "AssetManagement/Texture/Texture.h"
 
-class IconSearcher
+class IconInserter final
 {
 public:
-	explicit IconSearcher(Texture& texture,
-						  IconCodex& iconCodex);
+	explicit IconInserter(Texture& texture,
+                         List<Icon*>& iconList);
+	
 	void Draw(sf::RenderWindow& window) const;
-	void SelectNextIcon();
+	void InsertRandomIcon();
 private:
 	sf::Sprite m_Sprite;
 	int m_SelectedIconID;
 	Icon* m_SelectedIcon;
-	IconCodex& m_IconCodex;
+	List<Icon*>& m_IconList;
 };

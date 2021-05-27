@@ -2,11 +2,11 @@
 #include "IconSearcher.h"
 
 IconSearcher::IconSearcher(Texture& texture,
-						   List<Icon*>& iconList) :
+						   IconCodex& iconCodex) :
 	m_Sprite{texture.GetData()},
 	m_SelectedIconID{0},
 	m_SelectedIcon{nullptr},
-	m_IconList{iconList}
+	m_IconCodex{iconCodex}
 {
 	const auto textureSize = static_cast<sf::Vector2f>(m_Sprite.getTexture()->getSize());
 	m_Sprite.setOrigin(textureSize * 0.5f);
@@ -22,8 +22,8 @@ void IconSearcher::SelectNextIcon()
 {
 	do
 	{
-		m_SelectedIcon = m_IconList[m_SelectedIconID];
-		m_SelectedIconID = (m_SelectedIconID + 1) % m_IconList.size();
+		m_SelectedIcon = m_IconCodex.SelectIcon(m_SelectedIconID);
+		m_SelectedIconID = (m_SelectedIconID + 1) % m_IconCodex.GetActiveIconsCount();
 	} while (m_SelectedIcon == nullptr);
 
 	m_Sprite.setPosition(m_SelectedIcon->GetSprite().getPosition().x + 10.0f,

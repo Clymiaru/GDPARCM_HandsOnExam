@@ -8,10 +8,19 @@
 class IconCodex final
 {
 public:
-	IconCodex();
+	explicit IconCodex(List<Texture*>& iconTextures,
+					   const sf::Vector2f& spriteSize);
 	void DrawIcons(sf::RenderWindow& window);
 	
-	List<Icon*>& GetIconList();
+	List<Icon*>& GetActiveIcons();
+	int GetActiveIconsCount() const;
+	void ShowIcons(int amount);
+	void HideIcons(int amount);
+	Icon* SelectIcon(int iconID);
 private:
-	List<Icon*> m_IconList;
+	List<Icon*> m_ActiveIcons;
+	Queue<Icon*> m_InactiveIcons;
+	Queue<sf::Vector2i> m_UnusedPositions;
+
+	const int MaxIconSize = 10;
 };

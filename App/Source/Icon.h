@@ -17,6 +17,8 @@ public:
 	void SetPosition(const sf::Vector2i& position,
 					 const sf::Vector2f& worldOffset = sf::Vector2f(0.0f, 0.0f),
 					 float spacing = 0.0f);
+					 
+	sf::Vector2i GetPosition() const;
 private:
 	sf::Vector2i m_Position;
 	sf::Vector2f m_SpriteSize;

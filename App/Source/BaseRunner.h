@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "IconCodex.h"
+#include "IconDeleter.h"
 #include "IconSearcher.h"
 
 #include "Utils/TypeAlias.h"
@@ -31,7 +32,7 @@ private:
 	
 	IconCodex* m_IconCodex;
 	List<IconSearcher*> m_IconSearchers;
-	// List<IconDeleter>
+	List<IconDeleter*> m_IconDeleters;
 	// List<IconInserter>
 
 	void Initialize();

@@ -46,8 +46,13 @@ void Icon::SetPosition(const sf::Vector2i& position,
 	UpdateSpritePosition(worldOffset, spacing);
 }
 
+sf::Vector2i Icon::GetPosition() const
+{
+	return m_Position;
+}
+
 void Icon::UpdateSpritePosition(const sf::Vector2f& worldOffset,
-								const float spacing)
+                                const float spacing)
 {
 	m_Sprite.setOrigin(m_SpriteSize.x / 2.0f, m_SpriteSize.y / 2.0f);
 	

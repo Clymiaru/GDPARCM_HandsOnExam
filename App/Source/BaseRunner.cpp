@@ -59,37 +59,36 @@ void BaseRunner::Initialize()
 	assetManager.Load<Texture>(TextureNames::DELETER_ARROW, TextureFilepaths::DELETER_ARROW);
 	assetManager.Load<Texture>(TextureNames::INSERTER_ARROW, TextureFilepaths::INSERTER_ARROW);
 
-	auto& selectorTex = assetManager.Acquire<Texture>(TextureNames::SELECTER_ARROW);
+	List<Texture*> assetIcons;
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::REI_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::YUI_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::MIMI_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::RIMA_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::HIYORI_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::KYOUKA_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::MISOGI_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::SHIORI_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::RANGER_RIN_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::RANGER_MAHIRU_ICON));
 	
-	m_IconCodex = new IconCodex();
-
-	m_IconCodex->GetIconList()[2] = nullptr;
+	auto& selectorTex = assetManager.Acquire<Texture>(TextureNames::SELECTER_ARROW);
+	auto& deleterTex = assetManager.Acquire<Texture>(TextureNames::DELETER_ARROW);
+	auto& inserterTex = assetManager.Acquire<Texture>(TextureNames::INSERTER_ARROW);
+	
+	m_IconCodex = new IconCodex(assetIcons, {100.0f, 100.0f});
+	m_IconCodex->ShowIcons(10);
 
 	for (auto i = 0; i < 4; i++)
 	{
 		m_IconSearchers.push_back(new IconSearcher(selectorTex,
-												   m_IconCodex->GetIconList()));
+												   *m_IconCodex));
 		m_IconSearchers[i]->SelectNextIcon();
 	}
- 
-	// const auto xOffsetFromEdge = 75.0f;
-	// const auto spriteSize = 100.0f;
-	// const auto spacing = 25.0f;
-	//
-	// for (auto i = 0; i < 10; i++)
+
+	// for (auto i = 0; i < 1; i++)
 	// {
-	// 	auto& texture = *assetIcons[i];
-	// 	
-	// 	auto& icon = EntityManager::GetInstance().CreateEntity("Icon_" + std::to_string(i));
-	// 	
-	// 	auto& transform = icon.BindComponent<TransformComponent>();
-	// 	transform.SetPosition({xOffsetFromEdge + spriteSize * i + spacing * i,
- //                               BaseRunner::WindowSize.Height / 2.0f});
-	// 	transform.SetScale({spriteSize / texture.GetData().getSize().x,
- //                            spriteSize / texture.GetData().getSize().y});
-	// 	
-	// 	icon.BindComponent<SpriteRendererComponent>(&texture);
-	// 	EntitySystemManager::GetInstance().MarkEntity<SpriteRendererSystem>(icon);
+	// 	m_IconDeleters.push_back(new IconDeleter(deleterTex,
+	// 											   m_IconCodex->GetActiveIcons()));
 	// }
 }
 
@@ -118,6 +117,8 @@ void BaseRunner::Update(const float deltaTime)
 	{
 		currentIconSearcher = Utils::Random::GetInt(0, 3);
 		m_IconSearchers[currentIconSearcher]->SelectNextIcon();
+	
+		// m_IconDeleters.front()->DeleteRandomIcon();
 		m_Ticks = 0;
 	}
 }
