@@ -3,6 +3,7 @@
 #include <queue>
 #include <unordered_map>
 #include <vector>
+#include <array>
 
 #define STRINGIFY(x) (#x)
 
@@ -14,6 +15,9 @@ using Uint64 = uint64_t;
 using String = std::string;
 using StringRef = const String&;
 using CString = const char*;
+
+template <typename T, size_t size>
+using Array = std::array<T, size>;
 
 template <typename T>
 using List = std::vector<T>;

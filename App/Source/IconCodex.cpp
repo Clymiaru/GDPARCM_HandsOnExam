@@ -5,24 +5,16 @@
 #include "Utils/Random.h"
 #include "BaseRunner.h"
 
-// {
-// 	auto& assetManager = AssetManager::GetInstance();
-// 	
+void IconCodex::GenerateUnusedPositions()
+{
+	for (auto i = 0; i < MAX_ICON_COUNT; i++)
+	{
+		m_UnusedPositions.push({i, 0});
+	}
+}
 
-//
-// 	for (auto i = 0; i < 10; i++)
-// 	{
-// 		auto icon = new Icon(*assetIcons[i], {i, 0});
-// 		icon->SetSize({100.0f, 100.0f});
-// 		icon->SetPosition( {i, 0},
-// 				  {65.0f, BaseRunner::WindowSize.Height / 2.0f},
-// 				     25.0f);
-// 		m_IconList.push_back(icon);
-// 	}
-// }
-
-IconCodex::IconCodex(List<Texture*>& iconTextures,
-					 const sf::Vector2f& spriteSize)
+void IconCodex::InitializeIconsAsInactive(List<Texture*>& iconTextures,
+	const sf::Vector2f& spriteSize)
 {
 	for (auto i = 0; i < iconTextures.size(); i++)
 	{
@@ -30,11 +22,22 @@ IconCodex::IconCodex(List<Texture*>& iconTextures,
 		icon->SetSize(spriteSize);
 		m_InactiveIcons.push(icon);
 	}
+}
 
-	for (auto i = 0; i < MaxIconSize; i++)
+void IconCodex::InitializeActiveIconList()
+{
+	for (auto i = 0; i < MAX_ICON_COUNT; i++)
 	{
-		m_UnusedPositions.push({i, 0});
+		m_ActiveIcons[i] = nullptr;
 	}
+}
+
+IconCodex::IconCodex(List<Texture*>& iconTextures,
+                     const sf::Vector2f& spriteSize)
+{
+	InitializeActiveIconList();
+	InitializeIconsAsInactive(iconTextures, spriteSize);
+	GenerateUnusedPositions();
 }
 
 void IconCodex::DrawIcons(sf::RenderWindow& window)
@@ -48,37 +51,46 @@ void IconCodex::DrawIcons(sf::RenderWindow& window)
 	}
 }
 
-List<Icon*>& IconCodex::GetActiveIcons()
+Icon* IconCodex::ShowIcon()
 {
-	return m_ActiveIcons;
+	auto* toShowIcon = m_InactiveIcons.front();
+	m_InactiveIcons.pop();
+	
+	const auto iconPosition = m_UnusedPositions.front();
+	m_UnusedPositions.pop();
+		
+	toShowIcon->SetPosition(iconPosition,
+              {65.0f, BaseRunner::WindowSize.Height / 2.0f},
+                 25.0f);
+
+	m_ActiveIcons[iconPosition.x] = toShowIcon;
+	return toShowIcon;
 }
 
-int IconCodex::GetActiveIconsCount() const
+Icon* IconCodex::HideRandomIcon()
 {
-	return m_ActiveIcons.size();
+	auto iconIndex = 0;
+	Icon* toHideIcon = nullptr;
+	
+	do
+	{
+		iconIndex = Utils::Random::GetInt(0, static_cast<int>(m_ActiveIcons.size()) - 1);
+		toHideIcon = m_ActiveIcons[iconIndex];
+	} while (toHideIcon == nullptr);
+	
+	m_UnusedPositions.push(toHideIcon->GetPosition());
+	m_InactiveIcons.push(toHideIcon);
+	
+	m_ActiveIcons[toHideIcon->GetPosition().x] = nullptr;
+
+	return toHideIcon;
 }
 
 void IconCodex::ShowIcons(const int amount)
 {
-	if (static_cast<int>(m_ActiveIcons.size()) + amount > MaxIconSize)
-	{
-		std::cout << "Attempting to show more than 10 icons!\n"; 
-		return;
-	}
-	
 	for (auto i = 0; i < amount; i++)
 	{
-		auto* icon = m_InactiveIcons.front();
-		m_InactiveIcons.pop();
-
-		sf::Vector2i iconPosition = m_UnusedPositions.front();
-		m_UnusedPositions.pop();
-		
-		icon->SetPosition( iconPosition,
-		          {65.0f, BaseRunner::WindowSize.Height / 2.0f},
-		             25.0f);
-
-		m_ActiveIcons.push_back(icon);
+		ShowIcon();
 	}
 }
 
@@ -92,17 +104,7 @@ void IconCodex::HideIcons(const int amount)
 	
 	for (auto i = 0; i < amount; i++)
 	{
-		auto iconID = 0;
-		Icon* toHideIcon = nullptr;
-		
-		do
-		{
-			iconID = Utils::Random::GetInt(0, m_ActiveIcons.size() - 1);
-			toHideIcon = m_ActiveIcons[iconID];
-		} while (toHideIcon == nullptr);
-		
-		m_ActiveIcons.erase(m_ActiveIcons.begin() + iconID);
-		m_UnusedPositions.push(toHideIcon->GetPosition());
+		HideRandomIcon();
 	}
 }
 

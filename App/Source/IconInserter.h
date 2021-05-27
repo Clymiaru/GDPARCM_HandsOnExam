@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <SFML/Graphics/Sprite.hpp>
 
-#include "Icon.h"
+#include "IconCodex.h"
 
 #include "AssetManagement/Texture/Texture.h"
 
@@ -9,13 +9,12 @@ class IconInserter final
 {
 public:
 	explicit IconInserter(Texture& texture,
-                         List<Icon*>& iconList);
+                         IconCodex& iconCodex);
 	
 	void Draw(sf::RenderWindow& window) const;
-	void InsertRandomIcon();
+	void InsertIcon();
 private:
 	sf::Sprite m_Sprite;
-	int m_SelectedIconID;
 	Icon* m_SelectedIcon;
-	List<Icon*>& m_IconList;
+	IconCodex& m_IconCodex;
 };

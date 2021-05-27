@@ -102,14 +102,19 @@ void BaseRunner::Initialize()
 	{
 		m_IconSearchers.push_back(new IconSearcher(selectorTex,
 												   *m_IconCodex));
-		m_IconSearchers[i]->SelectNextIcon();
 	}
 
-	// for (auto i = 0; i < 1; i++)
-	// {
-	// 	m_IconDeleters.push_back(new IconDeleter(deleterTex,
-	// 											   m_IconCodex->GetActiveIcons()));
-	// }
+	for (auto i = 0; i < 1; i++)
+	{
+		m_IconDeleters.push_back(new IconDeleter(deleterTex,
+												 *m_IconCodex));
+	}
+
+	for (auto i = 0; i < 2; i++)
+	{
+		m_IconInserters.push_back(new IconInserter(inserterTex,
+                                                 *m_IconCodex));
+	}
 }
 
 void BaseRunner::ProcessEvents()
@@ -131,15 +136,31 @@ void BaseRunner::ProcessEvents()
 void BaseRunner::Update(const float deltaTime)
 {
 	m_Ticks += deltaTime;
-	static int currentIconSearcher = 0;
+	m_SearcherTicks += deltaTime;
+	m_DeleterTicks += deltaTime;
+	m_InserterTicks += deltaTime;
 	
-	if (m_Ticks > 0.2f)
+	static auto currentIconSearcher = 0;
+	static auto currentIconInserter = 0;
+	
+	if (m_SearcherTicks > 0.1f)
 	{
 		currentIconSearcher = Utils::Random::GetInt(0, 3);
 		m_IconSearchers[currentIconSearcher]->SelectNextIcon();
-	
-		// m_IconDeleters.front()->DeleteRandomIcon();
-		m_Ticks = 0;
+		m_SearcherTicks = 0;
+	}
+
+	if (m_DeleterTicks > 0.2f)
+	{
+		m_IconDeleters.front()->DeleteRandomIcon();
+		m_DeleterTicks = 0;
+	}
+
+	if (m_InserterTicks > 0.201f)
+	{
+		currentIconInserter = Utils::Random::GetInt(0, 1);
+		m_IconInserters[currentIconInserter]->InsertIcon();
+		m_InserterTicks = 0;
 	}
 }
 
@@ -154,15 +175,15 @@ void BaseRunner::Render()
 		searcher->Draw(m_Window);
 	}
 
-	// for (auto& deleter : m_IconDeleter)
-	// {
-	// 	
-	// }
-	//
-	// for (auto& inserter : m_IconInserter)
-	// {
-	// 	
-	// }
+	for (auto& deleter : m_IconDeleters)
+	{
+		deleter->Draw(m_Window);
+	}
+	
+	for (auto& inserter : m_IconInserters)
+	{
+		inserter->Draw(m_Window);
+	}
 	
 	m_Window.display();
 }

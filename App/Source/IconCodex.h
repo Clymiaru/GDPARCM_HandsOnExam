@@ -1,26 +1,29 @@
 ﻿#pragma once
+
 #include "Icon.h"
 
-// This will be a threaded approach
-// Some functions here will be ran in threads
-// All of them will be private
+const int MAX_ICON_COUNT = 10;
 
 class IconCodex final
 {
 public:
 	explicit IconCodex(List<Texture*>& iconTextures,
-					   const sf::Vector2f& spriteSize);
+	                   const sf::Vector2f& spriteSize);
 	void DrawIcons(sf::RenderWindow& window);
 	
-	List<Icon*>& GetActiveIcons();
-	int GetActiveIconsCount() const;
+	Icon* ShowIcon();
+	Icon* HideRandomIcon();
+	
 	void ShowIcons(int amount);
 	void HideIcons(int amount);
 	Icon* SelectIcon(int iconID);
 private:
-	List<Icon*> m_ActiveIcons;
+	Array<Icon*, 10> m_ActiveIcons;
 	Queue<Icon*> m_InactiveIcons;
 	Queue<sf::Vector2i> m_UnusedPositions;
 
-	const int MaxIconSize = 10;
+	void GenerateUnusedPositions();
+	void InitializeIconsAsInactive(List<Texture*>& iconTextures,
+	                               const sf::Vector2f& spriteSize);
+	void InitializeActiveIconList();
 };
