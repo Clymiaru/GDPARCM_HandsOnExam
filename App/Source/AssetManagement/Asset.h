@@ -2,7 +2,7 @@
 #include "Utils/TypeAlias.h"
 
 using AssetTag = CString;
-#define MAKE_ASSET(assetTag) static AssetTag GetStaticTag() { return #assetTag; }\
+#define MAKE_ASSET(assetTag) static AssetTag GetStaticTag() { return #assetTag; }					\
 							virtual AssetTag GetTag() const override { return GetStaticTag(); }
 
 class Asset
