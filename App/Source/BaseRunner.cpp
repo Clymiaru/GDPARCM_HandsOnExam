@@ -54,6 +54,16 @@ void BaseRunner::Initialize()
 	assetManager.Load<Texture>(TextureNames::SHIORI_ICON, TextureFilepaths::SHIORI_ICON);
 	assetManager.Load<Texture>(TextureNames::RANGER_RIN_ICON, TextureFilepaths::RANGER_RIN_ICON);
 	assetManager.Load<Texture>(TextureNames::RANGER_MAHIRU_ICON, TextureFilepaths::RANGER_MAHIRU_ICON);
+	assetManager.Load<Texture>(TextureNames::AKARI_ICON, TextureFilepaths::AKARI_ICON);
+	assetManager.Load<Texture>(TextureNames::ANNE_ICON, TextureFilepaths::ANNE_ICON);
+	assetManager.Load<Texture>(TextureNames::LUNA_ICON, TextureFilepaths::LUNA_ICON);
+	assetManager.Load<Texture>(TextureNames::MAHO_ICON, TextureFilepaths::MAHO_ICON);
+	assetManager.Load<Texture>(TextureNames::MUIMI_ICON, TextureFilepaths::MUIMI_ICON);
+	assetManager.Load<Texture>(TextureNames::NENEKA_ICON, TextureFilepaths::NENEKA_ICON);
+	assetManager.Load<Texture>(TextureNames::RINO_ICON, TextureFilepaths::RINO_ICON);
+	assetManager.Load<Texture>(TextureNames::SUZUNA_ICON, TextureFilepaths::SUZUNA_ICON);
+	assetManager.Load<Texture>(TextureNames::TAMAKI_ICON, TextureFilepaths::TAMAKI_ICON);
+	assetManager.Load<Texture>(TextureNames::YUKARI_ICON, TextureFilepaths::YUKARI_ICON);
 
 	assetManager.Load<Texture>(TextureNames::SELECTER_ARROW, TextureFilepaths::SELECTER_ARROW);
 	assetManager.Load<Texture>(TextureNames::DELETER_ARROW, TextureFilepaths::DELETER_ARROW);
@@ -70,6 +80,16 @@ void BaseRunner::Initialize()
 	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::SHIORI_ICON));
 	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::RANGER_RIN_ICON));
 	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::RANGER_MAHIRU_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::AKARI_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::ANNE_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::LUNA_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::MAHO_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::MUIMI_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::NENEKA_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::RINO_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::SUZUNA_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::TAMAKI_ICON));
+	assetIcons.emplace_back(&assetManager.Acquire<Texture>(TextureNames::YUKARI_ICON));
 	
 	auto& selectorTex = assetManager.Acquire<Texture>(TextureNames::SELECTER_ARROW);
 	auto& deleterTex = assetManager.Acquire<Texture>(TextureNames::DELETER_ARROW);
