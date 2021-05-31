@@ -1,18 +1,25 @@
 ﻿#pragma once
-#include "IconCodex.h"
 
+#include "SharedIconCodexData.h"
 #include "AssetManagement/Texture/Texture.h"
+#include "Threading/AThread.h"
 
-class IconDeleter final
+class IconDeleter final : public AThread
 {
 public:
 	explicit IconDeleter(Texture& texture,
-                         IconCodex& iconCodex);
+	                     SharedIconCodexData& iconCodexData);
+	~IconDeleter() override = default;
 	
 	void Draw(sf::RenderWindow& window) const;
-	void DeleteRandomIcon();
+	void SetSpritePosition();
+
+	void Run() override;
 private:
 	sf::Sprite m_Sprite;
-	Icon* m_SelectedIcon;
-	IconCodex& m_IconCodex;
+	SharedIconCodexData& m_SharedData;
+	
+	Icon* m_DeletedIcon;
+
+	void DeleteARandomIcon();
 };

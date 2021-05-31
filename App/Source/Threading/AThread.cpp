@@ -6,12 +6,11 @@ AThread::AThread()
 {
 }
 
-void AThread::Sleep(const float timeInSeconds)
+void AThread::Sleep(const std::chrono::milliseconds milliseconds)
 {
-	using namespace std::chrono;
-	const auto sleepDuration = seconds{static_cast<long int>(timeInSeconds)};
-	std::this_thread::sleep_for(sleepDuration);
+	std::this_thread::sleep_for(milliseconds);
 }
+
 
 void AThread::Start()
 {

@@ -2,7 +2,7 @@
 
 #include "Icon.h"
 
-const int MAX_ICON_COUNT = 10;
+const int MAX_ACTIVE_ICON_COUNT = 10;
 
 class IconCodex final
 {
@@ -15,8 +15,10 @@ public:
 	Icon* HideRandomIcon();
 	
 	void ShowIcons(int amount);
-	void HideIcons(int amount);
 	Icon* SelectIcon(int iconID);
+
+	bool AreAnyIconsActive();
+	bool IsActiveIconsFull();
 private:
 	Array<Icon*, 10> m_ActiveIcons;
 	Queue<Icon*> m_InactiveIcons;

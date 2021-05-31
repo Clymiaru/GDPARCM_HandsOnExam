@@ -98,22 +98,33 @@ void BaseRunner::Initialize()
 	m_IconCodex = new IconCodex(assetIcons, {100.0f, 100.0f});
 	m_IconCodex->ShowIcons(10);
 
-	for (auto i = 0; i < 4; i++)
+	for (int i = 0; i < MAX_ACTIVE_ICON_COUNT; i++)
 	{
-		m_IconSearchers.push_back(new IconSearcher(selectorTex,
-												   *m_IconCodex));
+		m_Lines[i] = sf::RectangleShape({4.0f, 720.0f});
+		m_Lines[i].setOrigin(4.0f / 2.0f, 720.0f / 2.0f);
+		m_Lines[i].setPosition({75.0f + (100.0f + 25.0f) * i, 720.0f / 2});
+		m_Lines[i].setFillColor(sf::Color(255, 255, 255, 40));
+	}
+	
+	m_SharedData = new SharedIconCodexData(m_IconCodex);
+
+
+	for (auto i = 0; i < NUM_OF_SEARCHERS; i++)
+	{
+		m_IconSearchers[i] = new IconSearcher(selectorTex,*m_SharedData, i + 1 );
+		m_IconSearchers[i]->Start();
 	}
 
-	for (auto i = 0; i < 1; i++)
+	for (auto i = 0; i < NUM_OF_DELETERS; i++)
 	{
-		m_IconDeleters.push_back(new IconDeleter(deleterTex,
-												 *m_IconCodex));
+		m_IconDeleters[i] = new IconDeleter(deleterTex,*m_SharedData);
+		m_IconDeleters[i]->Start();
 	}
-
-	for (auto i = 0; i < 2; i++)
+	
+	for (auto i = 0; i < NUM_OF_INSERTERS; i++)
 	{
-		m_IconInserters.push_back(new IconInserter(inserterTex,
-                                                 *m_IconCodex));
+		m_IconInserters[i] = new IconInserter(inserterTex,*m_SharedData);
+		m_IconInserters[i]->Start();
 	}
 }
 
@@ -135,40 +146,20 @@ void BaseRunner::ProcessEvents()
 
 void BaseRunner::Update(const float deltaTime)
 {
-	m_Ticks += deltaTime;
-	m_SearcherTicks += deltaTime;
-	m_DeleterTicks += deltaTime;
-	m_InserterTicks += deltaTime;
-	
-	static auto currentIconSearcher = 0;
-	static auto currentIconInserter = 0;
-	
-	if (m_SearcherTicks > 0.1f)
-	{
-		currentIconSearcher = Utils::Random::GetInt(0, 3);
-		m_IconSearchers[currentIconSearcher]->SelectNextIcon();
-		m_SearcherTicks = 0;
-	}
-
-	if (m_DeleterTicks > 0.2f)
-	{
-		m_IconDeleters.front()->DeleteRandomIcon();
-		m_DeleterTicks = 0;
-	}
-
-	if (m_InserterTicks > 0.201f)
-	{
-		currentIconInserter = Utils::Random::GetInt(0, 1);
-		m_IconInserters[currentIconInserter]->InsertIcon();
-		m_InserterTicks = 0;
-	}
 }
 
 void BaseRunner::Render()
 {
 	m_Window.clear();
-	
+
+	for (auto& line : m_Lines)
+	{
+		m_Window.draw(line);
+	}
+
 	m_IconCodex->DrawIcons(m_Window);
+
+	
 
 	for (auto& searcher : m_IconSearchers)
 	{
@@ -184,7 +175,6 @@ void BaseRunner::Render()
 	{
 		inserter->Draw(m_Window);
 	}
-	
 	m_Window.display();
 }
 

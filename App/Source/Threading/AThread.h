@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <chrono>
 
 class AThread
 {
@@ -6,7 +7,7 @@ public:
 	explicit AThread();
 	virtual ~AThread() = default;
 
-	static void Sleep(float timeInSeconds);
+	static void Sleep(const std::chrono::milliseconds milliseconds);
 
 	void Start();
 	virtual void Run() = 0;

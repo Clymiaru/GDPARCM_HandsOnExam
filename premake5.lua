@@ -49,10 +49,6 @@ project (GameName)
 		"%{Libraries.SFML}/lib"
 	}
 
-	postbuildcommands {
-	    ("{COPY} %{prj.location}Library/SFML/bin/openal32.dll %{wks.location}bin/"..OutputDir.. "/%{GameName}")
-	}
-
 	defines {
 	    "_CRT_SECURE_NO_WARNINGS",
         "SFML_STATIC"
@@ -63,12 +59,6 @@ project (GameName)
         "freetype.lib",
         "winmm.lib",
         "gdi32.lib",
-        "openal32.lib",
-        "flac.lib",
-        "vorbisenc.lib",
-        "vorbisfile.lib",
-        "vorbis.lib",
-        "ogg.lib",
 	}
 
 	filter "configurations:Debug"
@@ -82,7 +72,6 @@ project (GameName)
 		}
 
 	    links {
-            "sfml-audio-s-d.lib",
             "sfml-graphics-s-d.lib",
             "sfml-window-s-d.lib",
             "sfml-system-s-d.lib"
@@ -95,7 +84,6 @@ project (GameName)
         optimize "on"
 
         links {
-            "sfml-audio-s.lib",
             "sfml-graphics-s.lib",
             "sfml-window-s.lib",
             "sfml-system-s.lib"

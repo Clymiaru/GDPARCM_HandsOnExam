@@ -7,14 +7,14 @@
 
 void IconCodex::GenerateUnusedPositions()
 {
-	for (auto i = 0; i < MAX_ICON_COUNT; i++)
+	for (auto i = 0; i < MAX_ACTIVE_ICON_COUNT; i++)
 	{
 		m_UnusedPositions.push({i, 0});
 	}
 }
 
 void IconCodex::InitializeIconsAsInactive(List<Texture*>& iconTextures,
-	const sf::Vector2f& spriteSize)
+										  const sf::Vector2f& spriteSize)
 {
 	for (auto i = 0; i < iconTextures.size(); i++)
 	{
@@ -26,7 +26,7 @@ void IconCodex::InitializeIconsAsInactive(List<Texture*>& iconTextures,
 
 void IconCodex::InitializeActiveIconList()
 {
-	for (auto i = 0; i < MAX_ICON_COUNT; i++)
+	for (auto i = 0; i < MAX_ACTIVE_ICON_COUNT; i++)
 	{
 		m_ActiveIcons[i] = nullptr;
 	}
@@ -69,13 +69,18 @@ Icon* IconCodex::ShowIcon()
 
 Icon* IconCodex::HideRandomIcon()
 {
-	auto iconIndex = 0;
-	Icon* toHideIcon = nullptr;
+	if (!AreAnyIconsActive())
+	{
+		return nullptr;
+	}
 	
+	Icon* toHideIcon;
 	do
 	{
-		iconIndex = Utils::Random::GetInt(0, static_cast<int>(m_ActiveIcons.size()) - 1);
-		toHideIcon = m_ActiveIcons[iconIndex];
+		const auto iconIndex = Utils::Random::GetInt(0, static_cast<int>(m_ActiveIcons.size()) - 1);
+		toHideIcon     = m_ActiveIcons[iconIndex];
+		
+
 	} while (toHideIcon == nullptr);
 	
 	m_UnusedPositions.push(toHideIcon->GetPosition());
@@ -94,28 +99,33 @@ void IconCodex::ShowIcons(const int amount)
 	}
 }
 
-void IconCodex::HideIcons(const int amount)
-{
-	if (static_cast<int>(m_ActiveIcons.size()) - amount < 0)
-	{
-		std::cout << "Attempting to hide more than the active icons!\n"; 
-		return;
-	}
-	
-	for (auto i = 0; i < amount; i++)
-	{
-		HideRandomIcon();
-	}
-}
-
 Icon* IconCodex::SelectIcon(const int iconID)
 {
-	if (iconID < 0 ||
-		iconID > m_ActiveIcons.size() - 1)
-	{
-		std::cout << "Attempting to select an Icon that is not active!\n";
-		return nullptr;
-	}
-
 	return m_ActiveIcons[iconID];
+}
+
+bool IconCodex::AreAnyIconsActive()
+{
+	auto count = 0;
+	for (auto* icon : m_ActiveIcons)
+	{
+		if (icon != nullptr)
+		{
+			count++;
+		}
+	}
+	return count > 0;
+}
+
+bool IconCodex::IsActiveIconsFull()
+{
+	auto count = 0;
+	for (auto* icon : m_ActiveIcons)
+	{
+		if (icon != nullptr)
+		{
+			count++;
+		}
+	}
+	return count == MAX_ACTIVE_ICON_COUNT;
 }
