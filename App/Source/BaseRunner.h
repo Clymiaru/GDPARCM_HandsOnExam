@@ -10,7 +10,7 @@
 
 const int NUM_OF_SEARCHERS = 4;
 const int NUM_OF_INSERTERS = 2;
-const int NUM_OF_DELETERS = 1;
+const int NUM_OF_DELETERS =  1;
 
 struct Resolution
 {

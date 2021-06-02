@@ -22,4 +22,5 @@ private:
 	Icon* m_DeletedIcon;
 
 	void DeleteARandomIcon();
+	bool AreAnyIconsAvailable() const;
 };

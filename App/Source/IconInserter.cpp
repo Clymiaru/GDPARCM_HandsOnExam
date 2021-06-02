@@ -43,27 +43,28 @@ void IconInserter::Run()
 	{
 		SetSpritePosition();
 		m_InsertedIcon = nullptr;
-
-		Sleep(250ms);
 		
-		m_SharedData.DeleterIsRunning->acquire();
+		m_SharedData.DeleterIsRunningLock->acquire();
+		m_SharedData.InserterInProgressLock->acquire();
 		m_SharedData.IconCodexLock->acquire();
+		m_SharedData.DeleterIsRunningLock->release();
 		
 		const auto isActiveIconListFull = m_SharedData.IconStorage->IsActiveIconsFull();
 		if (isActiveIconListFull)
 		{
 			m_SharedData.IconCodexLock->release();
-			m_SharedData.DeleterIsRunning->release();
+			m_SharedData.DeleterIsRunningLock->release();
+			m_SharedData.InserterInProgressLock->release();
 			continue;
 		}
-		m_SharedData.DeleterIsRunning->release();
-		
+
 		InsertIconAtAvailableLocation();
 		std::cout << "Insert Icon at Pos " << m_InsertedIcon->GetPosition().x << "\n";
-
-		m_SharedData.IconCodexLock->release();
-
 		
+		m_SharedData.IconCodexLock->release();
+		m_SharedData.InserterInProgressLock->release();
+
+		Sleep(340ms);
 	}
 }
 

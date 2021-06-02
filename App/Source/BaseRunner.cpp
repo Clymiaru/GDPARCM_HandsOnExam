@@ -9,16 +9,20 @@ Resolution BaseRunner::WindowSize;
 
 BaseRunner::BaseRunner(Resolution windowSize,
 					   StringRef title) :
-	m_Event{}
+	m_Event{},
+	m_IconCodex{nullptr},
+	m_SharedData{nullptr},
+	m_IconSearchers{},
+	m_IconInserters{},
+	m_IconDeleters{}
 {
 	WindowSize        = std::move(windowSize);
 	const auto width  = WindowSize.Width;
 	const auto height = WindowSize.Height;
 	m_Window.create(sf::VideoMode(width, height),
-                    title,
-                    sf::Style::Close);
-
-	m_Window.setFramerateLimit(60);
+	                title,
+	                sf::Style::Close);
+	m_Window.setFramerateLimit(30);
 	m_IsRunning = m_Window.isOpen();
 }
 

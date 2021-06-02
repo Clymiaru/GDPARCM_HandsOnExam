@@ -41,31 +41,35 @@ void IconDeleter::Run()
 	{
 		SetSpritePosition();
 		m_DeletedIcon = nullptr;
-		Sleep(200ms);
 
-		m_SharedData.DeleterIsRunning->acquire();
+		m_SharedData.DeleterIsRunningLock->acquire();
+		m_SharedData.InserterInProgressLock->acquire();
 		m_SharedData.IconCodexLock->acquire();
-		
-		const auto anyIconsAvailable = m_SharedData.IconStorage->AreAnyIconsActive();
-		if (!anyIconsAvailable)
+		m_SharedData.DeleterIsRunningLock->release();
+		m_SharedData.InserterInProgressLock->release();
+
+		if (!AreAnyIconsAvailable())
 		{
-			// Don't do anything
 			m_SharedData.IconCodexLock->release();
-			m_SharedData.DeleterIsRunning->release();
 			continue;
 		}
-		m_SharedData.DeleterIsRunning->release();
-		
+
 		DeleteARandomIcon();
 		std::cout << "Delete Icon at Pos " << m_DeletedIcon->GetPosition().x << "\n";
 
 		m_SharedData.IconCodexLock->release();
 
+		Sleep(145ms);
 	}
 }
 
 void IconDeleter::DeleteARandomIcon()
 {
 	m_DeletedIcon = m_SharedData.IconStorage->HideRandomIcon();
+}
+
+bool IconDeleter::AreAnyIconsAvailable() const
+{
+	return m_SharedData.IconStorage->AreAnyIconsActive();
 }
 

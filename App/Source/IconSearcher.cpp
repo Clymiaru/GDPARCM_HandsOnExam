@@ -5,11 +5,11 @@
 
 IconSearcher::IconSearcher(Texture& texture,
                            SharedIconCodexData& iconCodexData,
-                           int id) :
+                           const int id) :
 	m_Sprite{texture.GetData()},
 	m_SharedData{iconCodexData},
 	m_SelectedIcon{nullptr},
-	m_GoalIconID{-1},
+	m_GoalIconID{Utils::Random::GetInt(0, MAX_ACTIVE_ICON_COUNT - 1)},
 	m_CurrentIconID{Utils::Random::GetInt(0, MAX_ACTIVE_ICON_COUNT - 1)},
 	m_ID{id}
 {
@@ -22,7 +22,6 @@ IconSearcher::IconSearcher(Texture& texture,
 
 void IconSearcher::Draw(sf::RenderWindow& window)
 {
-	SelectNextIcon();
 	window.draw(m_Sprite);
 }
 
@@ -40,7 +39,7 @@ void IconSearcher::SetSpritePosition()
 
 bool IconSearcher::IsGoalIconSelected() const
 {
-	return m_CurrentIconID == m_GoalIconID;
+	return m_GoalIconID == m_CurrentIconID;
 }
 
 void IconSearcher::Run()
@@ -52,21 +51,24 @@ void IconSearcher::Run()
 		SetSpritePosition();
 		m_SelectedIcon = nullptr;
 		
-		m_SharedData.DeleterIsRunning->acquire();
-		m_SharedData.IconCodexLock->acquire();
+		m_SharedData.DeleterIsRunningLock->acquire();
+		m_SharedData.SearcherCountLock->acquire();
+		++m_SharedData.SearcherCount;
+		if (m_SharedData.SearcherCount == 1)
+		{
+			m_SharedData.IconCodexLock->acquire();
+		}
+		m_SharedData.DeleterIsRunningLock->release();
+		m_SharedData.SearcherCountLock->release();
 
-		const auto anyIconsAvailable = m_SharedData.IconStorage->AreAnyIconsActive();
-		if (!anyIconsAvailable)
+		if (!AreAnyIconsAvailable())
 		{
 			m_SharedData.IconCodexLock->release();
-			m_SharedData.DeleterIsRunning->release();
+			m_SharedData.DeleterIsRunningLock->release();
 			continue;
 		}
-		m_SharedData.DeleterIsRunning->release();
 
-		// Check if the selected icon and current position is the same
-
-		if (m_GoalIconID == -1 || IsGoalIconSelected())
+		if (IsGoalIconSelected())
 		{
 			SelectARandomIcon();
 			Sleep(100ms);
@@ -74,20 +76,25 @@ void IconSearcher::Run()
 
 		while (m_SelectedIcon == nullptr)
 		{
-			Icon* icon = m_SharedData.IconStorage->SelectIcon(m_CurrentIconID);
+			auto* icon = m_SharedData.IconStorage->SelectIcon(m_CurrentIconID);
 			if (icon != nullptr)
 			{
 				m_SelectedIcon = icon;
-				break;;
+				break;
 			}
 			SelectNextIcon();
 		}
 
-
-		//Sleep(10ms);
-
-		m_SharedData.IconCodexLock->release();
-
+		m_SharedData.SearcherCountLock->acquire();
+		--m_SharedData.SearcherCount;
+		if (m_SharedData.SearcherCount == 0)
+		{
+			m_SharedData.IconCodexLock->release();
+		}
+		m_SharedData.SearcherCountLock->release();
+		
+		Sleep(20ms);
+		SelectNextIcon();
 	}
 }
 
@@ -108,5 +115,10 @@ void IconSearcher::SelectNextIcon()
 	{
 		m_CurrentIconID = 0;
 	}
+}
+
+bool IconSearcher::AreAnyIconsAvailable() const
+{
+	return m_SharedData.IconStorage->AreAnyIconsActive();
 }
 

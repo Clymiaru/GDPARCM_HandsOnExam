@@ -29,4 +29,5 @@ private:
 
 	void SelectARandomIcon();
 	void SelectNextIcon();
+	bool AreAnyIconsAvailable() const;
 };
